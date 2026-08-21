@@ -165,7 +165,7 @@ All endpoints are prefixed with `/api`. Protected routes require `Authorization:
 ### Auth
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| `POST` | `/auth/register` | Public | Register resident or admin |
+| `POST` | `/auth/register` | Public | Register resident account (Admins guarded against mass assignment) |
 | `POST` | `/auth/login` | Public | Returns JWT |
 
 ### Complaints
@@ -199,6 +199,7 @@ All endpoints are prefixed with `/api`. Protected routes require `Authorization:
 | Password storage | `bcryptjs` with 10 salt rounds |
 | Session management | Stateless JWT (1-day expiry) |
 | RBAC enforcement | `requireRole` middleware on every protected route |
+| Privilege Escalation | Public self-registration hardcoded to RESIDENT; admin roles require direct DB provisioning or secure environment secrets |
 | BOLA / IDOR | Residents can only read/write **their own** complaints; verified server-side |
 | File uploads | MIME type check + 5 MB size limit via Multer before Cloudinary |
 | Atomic status updates | Prisma `$transaction` prevents race conditions on concurrent updates |

@@ -27,6 +27,8 @@ jobs:
 
       - name: Validate Prisma Schema
         run: cd server && npx prisma validate
+        env:
+          DATABASE_URL: "file:./dev.db"
 
       - name: Run Backend Test Suite
         run: |

@@ -73,30 +73,18 @@ Apartment societies run on WhatsApp groups and phone calls. Complaints get lost.
 
 ## 🏗️ System Architecture
 
-```
-┌──────────────────────────────────────────────────────┐
-│               React + Vite  (Vercel)                 │
-│    Axios client · React Router · Tailwind CSS v3     │
-└─────────────────────┬────────────────────────────────┘
-                      │  Bearer JWT  (HTTPS)
-                      ▼
-┌──────────────────────────────────────────────────────┐
-│           Node.js + Express API  (Render)            │
-│   JWT Auth · RBAC Middleware · Multer · Cloudinary   │
-└─────────────────────┬────────────────────────────────┘
-                      │  Prisma ORM  ($transaction)
-                      ▼
-┌──────────────────────────────────────────────────────┐
-│         PostgreSQL  (Supabase / Render DB)           │
-│    Users · Complaints · ComplaintHistory · Notices   │
-└──────────────────────────────────────────────────────┘
-                      │
-                      ▼  Fire-and-forget
-┌──────────────────────────────────────────────────────┐
-│          SMTP Email  (Nodemailer / Mailtrap)         │
-│   Status change alerts · Important notice dispatches │
-└──────────────────────────────────────────────────────┘
-```
+<div align="center">
+  <img src="docs/architecture.png" alt="SocietyPulse System Architecture" width="900"/>
+</div>
+
+<br/>
+
+The platform is a four-tier system:
+
+- **Client** (React + Vite on Vercel) — authenticated via Bearer JWT, communicates over HTTPS
+- **Backend API** (Node.js + Express on Render) — JWT & RBAC middleware, Multer file pipes, Prisma `$transaction` for atomic writes
+- **Data Layer** (PostgreSQL on Supabase/Render) — normalized schema: `User`, `Complaint`, `ComplaintHistory`, `Notice`, `SystemSetting`
+- **Integrations** — Cloudinary for photo CDN, Nodemailer/Mailtrap for email alerts, cron-job.org for free uptime pings
 
 ---
 

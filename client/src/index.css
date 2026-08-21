@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional custom scrollbars or aesthetic global settings */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF9F2; /* sand-light */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D9D7C7; /* charcoal-border */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D1CCA9; /* sand-muted */
+}
+
+/* Custom class for slow animated pulse glow */
+.animate-pulse-slow {
+  animation: pulse 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: .85;
+    transform: scale(1.015);
+  }
+}

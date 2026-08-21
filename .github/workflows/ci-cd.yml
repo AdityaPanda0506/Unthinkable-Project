@@ -1,0 +1,73 @@
+name: Production CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate-and-test:
+    name: Lint, Test & Build Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # Backend Checks & Tests
+      - name: Install Backend Dependencies
+        run: cd server && npm ci
+
+      - name: Validate Prisma Schema
+        run: cd server && npx prisma validate
+
+      - name: Run Backend Test Suite
+        run: |
+          cd server
+          npm test --if-present
+
+      # Frontend Checks & Build Validation
+      - name: Install Frontend Dependencies
+        run: cd client && npm ci
+
+      - name: Test Frontend Production Build
+        run: cd client && npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'https://society-maintenance-api.onrender.com/api' }}
+
+  deploy:
+    name: Automatic Deployment to Production
+    needs: validate-and-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Deploy Server via Webhook
+      - name: Trigger Backend Cloud Deployment (Render / Railway)
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering backend deployment..."
+          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+
+      # Deploy Client to Vercel
+      - name: Deploy Client to Vercel
+        if: env.VERCEL_TOKEN != ''
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./client

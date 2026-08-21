@@ -11,9 +11,9 @@ jobs:
     name: Lint, Test & Build Validation
     runs-on: ubuntu-latest
 
-    # Define environment variables at the job level so Prisma and test runners have access
+    # Set a valid postgresql format URI for Prisma schema validation in CI
     env:
-      DATABASE_URL: "file:./dev.db"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/testdb?sslmode=disable"
       JWT_SECRET: "ci_test_secret_key"
       NODE_ENV: "test"
 
@@ -46,7 +46,7 @@ jobs:
       - name: Test Frontend Production Build
         run: cd client && npm run build
         env:
-          VITE_API_BASE_URL: "https://society-maintenance-api.onrender.com/api"
+          VITE_API_BASE_URL: "https://society-maintenance-api-zime.onrender.com/api"
 
   deploy:
     name: Automatic Deployment to Production

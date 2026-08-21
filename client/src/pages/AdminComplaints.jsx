@@ -230,95 +230,97 @@ const AdminComplaints = () => {
         </div>
 
         {/* Filters Toolbar */}
-        <section className="bg-white border border-charcoal-border rounded-2xl p-5 mb-6 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            
+        <section className="bg-white border border-charcoal-border rounded-md mb-5 overflow-hidden shadow-sm">
+          <div className="filter-bar">
+
             {/* Search Input */}
-            <div className="md:col-span-4 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-charcoal-muted" />
+            <div className="relative flex-1 min-w-[220px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-muted pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search description, resident name or flat..."
+                placeholder="Search resident, flat or description…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white border border-charcoal-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-charcoal placeholder-sand-muted focus:outline-none focus:border-navy transition-colors"
+                className="search-input w-full pl-9"
               />
             </div>
 
             {/* Status Select */}
-            <div className="md:col-span-2">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full bg-white border border-charcoal-border rounded-xl py-2.5 px-3.5 text-sm text-charcoal focus:outline-none focus:border-navy"
-              >
-                <option value="">All Statuses</option>
-                <option value="OPEN">Open</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="RESOLVED">Resolved</option>
-              </select>
-            </div>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="">All Statuses</option>
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="RESOLVED">Resolved</option>
+            </select>
 
             {/* Priority Select */}
-            <div className="md:col-span-2">
-              <select
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(e.target.value)}
-                className="w-full bg-white border border-charcoal-border rounded-xl py-2.5 px-3.5 text-sm text-charcoal focus:outline-none focus:border-navy"
-              >
-                <option value="">All Priorities</option>
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-              </select>
-            </div>
+            <select
+              value={filterPriority}
+              onChange={(e) => setFilterPriority(e.target.value)}
+            >
+              <option value="">All Priorities</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+            </select>
 
             {/* Category Select */}
-            <div className="md:col-span-2">
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full bg-white border border-charcoal-border rounded-xl py-2.5 px-3.5 text-sm text-charcoal focus:outline-none focus:border-navy"
-              >
-                <option value="">All Categories</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Lift">Lift</option>
-                <option value="Security">Security</option>
-                <option value="General">General</option>
-              </select>
-            </div>
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+            >
+              <option value="">All Categories</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Carpentry">Carpentry</option>
+              <option value="Lift">Lift</option>
+              <option value="Security">Security</option>
+              <option value="General">General</option>
+            </select>
 
-            {/* Actions Trigger Block */}
-            <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-3.5">
-              <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-charcoal-muted select-none">
-                <input
-                  type="checkbox"
-                  checked={filterOverdue}
-                  onChange={(e) => setFilterOverdue(e.target.checked)}
-                  className="rounded bg-white border-charcoal-border text-red-800 focus:ring-red-200 w-4 h-4"
-                />
-                <span className={filterOverdue ? 'text-red-800 font-extrabold' : ''}>SLA Overdue</span>
-              </label>
+            {/* SLA Overdue toggle */}
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-charcoal-muted select-none ml-auto">
+              <input
+                type="checkbox"
+                checked={filterOverdue}
+                onChange={(e) => setFilterOverdue(e.target.checked)}
+                className="rounded border-charcoal-border text-red-800 w-4 h-4"
+              />
+              <span className={filterOverdue ? 'text-red-700 font-bold' : ''}>SLA Overdue</span>
+            </label>
 
-              <button
-                onClick={handleFilterReset}
-                className="text-xs font-bold text-navy hover:text-navy-hover transition-colors"
-              >
-                Reset
-              </button>
-            </div>
+            <button
+              onClick={handleFilterReset}
+              className="text-xs font-bold text-navy hover:text-navy-hover transition-colors whitespace-nowrap"
+            >
+              Clear Filters
+            </button>
 
           </div>
         </section>
 
         {/* Complaints Table */}
-        <section className="bg-white border border-charcoal-border rounded-2xl shadow-sm overflow-hidden animate-fade-in">
+        <section className="bg-white border border-charcoal-border rounded-md shadow-sm overflow-hidden animate-fade-in">
+
+          {/* Table meta row */}
+          {!loading && sortedComplaints.length > 0 && (
+            <div className="flex items-center justify-between px-5 py-3 border-b border-charcoal-border bg-sand-light/30">
+              <span className="text-xs text-charcoal-muted font-semibold">
+                Showing <span className="font-bold text-charcoal">{sortedComplaints.length}</span> complaints
+              </span>
+              <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider">
+                Click any row to manage
+              </span>
+            </div>
+          )}
+
           {loading ? (
-            <div className="p-16 flex flex-col items-center justify-center gap-2 text-charcoal-muted">
-              <div className="animate-spin rounded-full h-8 w-8 border-t border-navy"></div>
-              <span className="font-semibold">Fetching complaints registry...</span>
+            <div className="p-16 flex flex-col items-center justify-center gap-3 text-charcoal-muted">
+              <div className="animate-spin rounded-full h-9 w-9 border-2 border-charcoal-border border-t-navy"></div>
+              <span className="text-sm font-semibold">Fetching complaints registry…</span>
             </div>
           ) : sortedComplaints.length === 0 ? (
             <div className="p-16 text-center text-charcoal-muted">
@@ -327,68 +329,66 @@ const AdminComplaints = () => {
               <p className="text-xs text-charcoal-muted mt-1 font-semibold">Adjust search fields or filters above.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="pro-table-wrap" style={{borderRadius: 0, border: 'none'}}>
+              <table className="pro-table">
                 <thead>
-                  <tr className="border-b border-charcoal-border bg-sand-light/50 text-[10px] text-charcoal-muted font-bold uppercase tracking-wider">
-                    <th className="py-4.5 px-6">Ticket ID</th>
-                    <th className="py-4.5 px-6">Resident & Flat</th>
-                    <th className="py-4.5 px-6">Category</th>
-                    <th className="py-4.5 px-6">Title</th>
-                    <th className="py-4.5 px-6">Priority</th>
-                    <th className="py-4.5 px-6">Overdue Status</th>
-                    <th className="py-4.5 px-6 text-right">Actions</th>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Resident &amp; Flat</th>
+                    <th>Category</th>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>SLA</th>
+                    <th className="text-right">Manage</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-charcoal-border/50 text-xs text-charcoal">
-                  {sortedComplaints.map((complaint) => {
+                <tbody>
+                  {sortedComplaints.map((complaint, idx) => {
                     const overdueDays = getOverdueDays(complaint.createdAt);
-                    
+
                     return (
                       <tr
                         key={complaint.id}
                         onClick={() => openManagementModal(complaint.id)}
-                        className={`
-                          cursor-pointer transition-colors group
-                          ${complaint.isOverdue
-                            ? 'bg-red-50 hover:bg-red-100/75 border-l-2 border-l-red-500'
-                            : 'hover:bg-sand/20'
-                          }
-                        `}
+                        className={`cursor-pointer group ${complaint.isOverdue ? 'row-overdue' : ''}`}
+                        style={{ animationDelay: `${idx * 28}ms` }}
                       >
-                        <td className="py-4.5 px-6 font-mono text-[10px] text-charcoal-muted group-hover:text-navy transition-colors">
+                        <td className="font-mono text-[11px] text-charcoal-muted group-hover:text-navy transition-colors">
                           #{complaint.id.substring(0, 8)}
                         </td>
-                        <td className="py-4.5 px-6">
-                          <div className="font-bold text-charcoal">{complaint.resident?.name}</div>
-                          <div className="text-[10px] text-charcoal-muted mt-0.5 font-semibold">Flat {complaint.resident?.flatNumber}</div>
+                        <td>
+                          <div className="font-semibold text-charcoal">{complaint.resident?.name}</div>
+                          <div className="text-[11px] text-charcoal-muted mt-0.5">Flat {complaint.resident?.flatNumber}</div>
                         </td>
-                        <td className="py-4.5 px-6">
-                          <span className="px-2 py-0.5 bg-sand-light border border-charcoal-border rounded text-charcoal font-bold">
+                        <td>
+                          <span className="px-2.5 py-1 bg-sand-light border border-charcoal-border rounded text-[11px] text-charcoal font-semibold">
                             {complaint.category}
                           </span>
                         </td>
-                        <td className="py-4.5 px-6 font-extrabold text-charcoal truncate max-w-[200px]">
-                          {complaint.title}
+                        <td className="font-semibold text-charcoal max-w-[200px]">
+                          <span className="block truncate">{complaint.title}</span>
                         </td>
-                        <td className="py-4.5 px-6">
+                        <td>
                           <PriorityBadge priority={complaint.priority} />
                         </td>
-                        <td className="py-4.5 px-6">
+                        <td>
+                          <StatusBadge status={complaint.status} />
+                        </td>
+                        <td>
                           {complaint.status === 'RESOLVED' ? (
-                            <span className="text-sage font-bold">Completed</span>
+                            <span className="text-sage font-semibold text-[11px]">Completed</span>
                           ) : complaint.isOverdue ? (
-                            <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 border border-red-200 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded shadow-sm animate-pulse-slow">
-                              OVERDUE ({overdueDays} days)
+                            <span className="inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200 text-[10px] font-bold uppercase px-2 py-0.5 rounded-sm animate-pulse-slow">
+                              {overdueDays}d overdue
                             </span>
                           ) : (
-                            <span className="text-charcoal-muted font-semibold">On Track</span>
+                            <span className="text-charcoal-muted text-[11px] font-medium">On Track</span>
                           )}
                         </td>
-                        <td className="py-4.5 px-6 text-right">
-                          <div className="flex items-center justify-end gap-3.5">
-                            <StatusBadge status={complaint.status} />
-                            <ArrowUpRight className="w-4 h-4 text-charcoal-muted group-hover:text-charcoal transition-colors" />
+                        <td className="text-right">
+                          <div className="flex items-center justify-end">
+                            <ArrowUpRight className="w-4 h-4 text-charcoal-muted group-hover:text-navy transition-colors" />
                           </div>
                         </td>
                       </tr>

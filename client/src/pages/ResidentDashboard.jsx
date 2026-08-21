@@ -349,34 +349,37 @@ const ResidentDashboard = () => {
         )}
 
         {/* Complaints Section */}
-        <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-charcoal-border pb-4 gap-4">
-            <h2 className="text-xl font-extrabold text-navy flex items-center gap-2 pl-1">
+        <section className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <h2 className="text-xl font-extrabold text-navy flex items-center gap-2">
               <FileText className="w-5 h-5 text-navy" />
               My Complaints History
             </h2>
 
-            {/* Tabs */}
-            <div className="flex bg-white border border-charcoal-border p-1.5 rounded-xl text-xs font-bold gap-1 select-none shadow-sm">
+            {/* Professional underline tab bar */}
+            <nav className="pro-tabs">
               <button
                 onClick={() => setActiveTab('ALL')}
-                className={`px-4.5 py-2 rounded-lg transition-all duration-300 ${activeTab === 'ALL' ? 'bg-navy text-white shadow-sm' : 'text-charcoal-muted hover:text-charcoal'}`}
+                className={`pro-tab-btn ${activeTab === 'ALL' ? 'active' : ''}`}
               >
                 All
+                <span className="pro-tab-count">{complaints.length}</span>
               </button>
               <button
                 onClick={() => setActiveTab('ACTIVE')}
-                className={`px-4.5 py-2 rounded-lg transition-all duration-300 ${activeTab === 'ACTIVE' ? 'bg-navy text-white shadow-sm' : 'text-charcoal-muted hover:text-charcoal'}`}
+                className={`pro-tab-btn ${activeTab === 'ACTIVE' ? 'active' : ''}`}
               >
                 Active
+                <span className="pro-tab-count">{complaints.filter(c => c.status === 'OPEN' || c.status === 'IN_PROGRESS').length}</span>
               </button>
               <button
                 onClick={() => setActiveTab('RESOLVED')}
-                className={`px-4.5 py-2 rounded-lg transition-all duration-300 ${activeTab === 'RESOLVED' ? 'bg-navy text-white shadow-sm' : 'text-charcoal-muted hover:text-charcoal'}`}
+                className={`pro-tab-btn ${activeTab === 'RESOLVED' ? 'active' : ''}`}
               >
                 Resolved
+                <span className="pro-tab-count">{complaints.filter(c => c.status === 'RESOLVED').length}</span>
               </button>
-            </div>
+            </nav>
           </div>
 
           {loading ? (
@@ -391,56 +394,54 @@ const ResidentDashboard = () => {
               <p className="text-xs text-charcoal-muted mt-1 font-semibold">There are no complaints under this tab filter.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-3">
               {filteredComplaints.map((complaint) => {
                 const isExpanded = expandedComplaintId === complaint.id;
 
                 return (
                   <div
                     key={complaint.id}
-                    className={`
-                      bg-white border rounded-2xl overflow-hidden transition-all duration-300 shadow-sm
-                      ${isExpanded ? 'border-navy shadow-md' : 'border-charcoal-border'}
-                    `}
+                    className={`complaint-card ${isExpanded ? 'expanded' : ''} ${complaint.isOverdue ? 'overdue' : ''}`}
                   >
                     {/* Header click */}
                     <div
                       onClick={() => handleToggleExpand(complaint.id)}
-                      className="p-5 flex items-center justify-between gap-4 cursor-pointer hover:bg-sand/35 transition-colors"
+                      className="complaint-card-header"
                     >
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-widest bg-sand-light px-2 py-0.5 border border-charcoal-border rounded">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-widest bg-sand-light px-2.5 py-1 border border-charcoal-border rounded">
                             {complaint.category}
                           </span>
-                          <h4 className="text-sm font-extrabold text-charcoal truncate">{complaint.title}</h4>
+                          <h4 className="text-sm font-bold text-charcoal">{complaint.title}</h4>
                           <PriorityBadge priority={complaint.priority} />
                         </div>
-                        <p className="text-xs text-charcoal-muted mt-1.5 truncate max-w-xl font-medium">
+                        <p className="text-xs text-charcoal-muted mt-2 truncate max-w-xl">
                           {complaint.description}
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3.5 shrink-0">
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="hidden sm:block text-xs text-charcoal-muted font-semibold">{getRelativeDate(complaint.createdAt)}</span>
                         <StatusBadge status={complaint.status} />
                         {isExpanded ? (
-                          <ChevronUp className="w-4 h-4 text-charcoal-muted" />
+                          <ChevronUp className="w-4 h-4 text-charcoal-muted flex-shrink-0" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-charcoal-muted" />
+                          <ChevronDown className="w-4 h-4 text-charcoal-muted flex-shrink-0" />
                         )}
                       </div>
                     </div>
 
                     {/* Expand details drawer */}
                     {isExpanded && (
-                      <div className="border-t border-charcoal-border p-5 bg-sand-light/20 space-y-6">
-                        
+                      <div className="complaint-card-body border-t border-charcoal-border pt-5">
+
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                          
+
                           <div className="md:col-span-7 space-y-4">
                             <div>
-                              <h5 className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider">Details Description</h5>
-                              <p className="text-sm text-charcoal leading-relaxed whitespace-pre-wrap mt-1.5 font-semibold">
+                              <h5 className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider mb-2">Full Description</h5>
+                              <p className="text-sm text-charcoal leading-relaxed whitespace-pre-wrap">
                                 {complaint.description}
                               </p>
                             </div>
@@ -450,40 +451,38 @@ const ResidentDashboard = () => {
                                 <h5 className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider mb-2">Attachment</h5>
                                 <div
                                   onClick={() => setLightboxUrl(getFullPhotoUrl(complaint.photoUrl))}
-                                  className="group relative inline-block w-40 h-40 border border-charcoal-border rounded-xl overflow-hidden cursor-pointer shadow bg-white"
+                                  className="group relative inline-block w-40 h-40 border border-charcoal-border rounded-md overflow-hidden cursor-pointer shadow bg-white"
                                 >
                                   <img
                                     src={getFullPhotoUrl(complaint.photoUrl)}
                                     alt="Preview thumbnail"
-                                    className="w-full h-full object-cover group-hover:scale-103 transition-all duration-300"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
                                   />
                                   <div className="absolute inset-0 bg-navy/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                                    <Eye className="w-4.5 h-4.5" />
+                                    <Eye className="w-5 h-5" />
                                   </div>
                                 </div>
                               </div>
                             )}
                           </div>
 
-                          <div className="md:col-span-5 bg-sand-light border border-charcoal-border rounded-2xl p-4.5 space-y-4 h-fit text-xs text-charcoal">
+                          <div className="md:col-span-5 bg-sand-light border border-charcoal-border rounded-md p-4 space-y-3.5 h-fit text-xs text-charcoal">
                             <div>
                               <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider">Assigned Staff</span>
-                              <p className="text-charcoal font-bold mt-0.5">
+                              <p className="text-charcoal font-bold mt-1">
                                 {complaint.assignedTo?.name || 'Unassigned / Reviewing'}
                               </p>
                             </div>
-
-                            <div>
-                              <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider">Registered Date</span>
-                              <p className="text-charcoal mt-0.5 font-semibold">
+                            <div className="border-t border-charcoal-border/50 pt-3">
+                              <span className="text-[10px] font-bold text-charcoal-muted uppercase tracking-wider">Filed On</span>
+                              <p className="text-charcoal mt-1 font-semibold">
                                 {getRelativeDate(complaint.createdAt)}
                               </p>
                             </div>
-
                             {complaint.resolvedAt && (
-                              <div>
-                                <span className="text-[10px] font-bold text-sage uppercase tracking-wider">Resolved Date</span>
-                                <p className="text-sage font-bold mt-0.5">
+                              <div className="border-t border-charcoal-border/50 pt-3">
+                                <span className="text-[10px] font-bold text-sage uppercase tracking-wider">Resolved On</span>
+                                <p className="text-sage font-bold mt-1">
                                   {getRelativeDate(complaint.resolvedAt)}
                                 </p>
                               </div>
@@ -493,7 +492,7 @@ const ResidentDashboard = () => {
                         </div>
 
                         {/* Audit Timeline */}
-                        <div className="border-t border-charcoal-border pt-5">
+                        <div className="border-t border-charcoal-border mt-5 pt-5">
                           <h5 className="text-xs font-bold text-charcoal uppercase tracking-wider mb-4">Complaint Logs Lifecycle</h5>
                           {detailsLoading ? (
                             <div className="text-xs text-charcoal-muted flex items-center gap-1.5 py-4">

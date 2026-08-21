@@ -2,37 +2,265 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Additional custom scrollbars or aesthetic global settings */
+/* ────────────────────────────────────────────
+   Custom Scrollbars
+──────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #FAF9F2; /* sand-light */
+  background: #FAF9F2;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #D9D7C7; /* charcoal-border */
-  border-radius: 4px;
+  background: #D9D7C7;
+  border-radius: 3px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #D1CCA9; /* sand-muted */
+  background: #B5B09A;
 }
 
-/* Custom class for slow animated pulse glow */
+/* ────────────────────────────────────────────
+   Professional Table Styles
+──────────────────────────────────────────── */
+
+/* Sharper, enterprise-grade table wrapper */
+.pro-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #D9D7C7;
+  border-radius: 6px;
+}
+
+.pro-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.8125rem; /* 13px */
+}
+
+/* Table Head */
+.pro-table thead tr {
+  background: #F0EDE3;
+  border-bottom: 2px solid #D9D7C7;
+}
+
+.pro-table thead th {
+  padding: 14px 20px;
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666666;
+  white-space: nowrap;
+}
+
+/* Table Body */
+.pro-table tbody tr {
+  border-bottom: 1px solid #E8E5D8;
+  transition: background 0.12s ease, box-shadow 0.12s ease;
+  animation: rowIn 0.18s ease-out both;
+}
+
+.pro-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pro-table tbody tr:hover {
+  background: #F7F5ED;
+  box-shadow: inset 3px 0 0 #1B365D;
+}
+
+.pro-table tbody td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  color: #333333;
+}
+
+/* Overdue row accent */
+.pro-table tbody tr.row-overdue {
+  background: #FFF5F5;
+  box-shadow: inset 3px 0 0 #EF4444;
+}
+.pro-table tbody tr.row-overdue:hover {
+  background: #FEECEC;
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ────────────────────────────────────────────
+   Professional Tab Bar
+──────────────────────────────────────────── */
+
+.pro-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #D9D7C7;
+  gap: 0;
+}
+
+.pro-tab-btn {
+  position: relative;
+  padding: 12px 22px;
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 600;
+  color: #666666;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.pro-tab-btn:hover {
+  color: #333333;
+}
+
+.pro-tab-btn.active {
+  color: #1B365D;
+  font-weight: 700;
+}
+
+/* Sliding underline indicator */
+.pro-tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #1B365D;
+  border-radius: 2px 2px 0 0;
+  transform: scaleX(0);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+.pro-tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+/* Tab counter badge */
+.pro-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  padding: 0 6px;
+  min-width: 20px;
+  height: 18px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: #E8EEF5;
+  color: #1B365D;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pro-tab-btn.active .pro-tab-count {
+  background: #1B365D;
+  color: #fff;
+}
+
+/* ────────────────────────────────────────────
+   Filter Toolbar Row
+──────────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: #FAFAF6;
+  border-bottom: 1px solid #D9D7C7;
+}
+
+.filter-bar input,
+.filter-bar select {
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.8125rem;
+  border: 1px solid #D9D7C7;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus {
+  border-color: #1B365D;
+  box-shadow: 0 0 0 2px rgba(27, 54, 93, 0.1);
+}
+
+.filter-bar input.search-input {
+  min-width: 240px;
+}
+
+/* ────────────────────────────────────────────
+   Slow Pulse
+──────────────────────────────────────────── */
 .animate-pulse-slow {
-  animation: pulse 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulseSlow 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: .85;
-    transform: scale(1.015);
-  }
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+/* ────────────────────────────────────────────
+   Complaint Card (Resident Dashboard)
+──────────────────────────────────────────── */
+.complaint-card {
+  background: #fff;
+  border: 1px solid #D9D7C7;
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeIn 0.25s ease-out both;
+}
+
+.complaint-card:hover {
+  border-left-color: #1B365D;
+  box-shadow: 0 2px 12px rgba(27, 54, 93, 0.07);
+}
+
+.complaint-card.expanded {
+  border-left-color: #1B365D;
+  box-shadow: 0 4px 20px rgba(27, 54, 93, 0.1);
+}
+
+.complaint-card.overdue {
+  border-left-color: #EF4444;
+  background: #FFF8F8;
+}
+
+.complaint-card-header {
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: background 0.12s ease;
+}
+
+.complaint-card-header:hover {
+  background: #F8F6EE;
+}
+
+.complaint-card-body {
+  padding: 0 20px 20px;
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

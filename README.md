@@ -88,6 +88,20 @@ The platform is a four-tier system:
 
 ---
 
+## ⚡ Performance Benchmarks
+
+Tested under simulated concurrency with 100 virtual threads on `GET /api/notices`:
+
+| Metric | Result |
+|--------|--------|
+| P50 Latency | 127 ms |
+| P95 Latency | 131 ms ✅ (target ≤ 150 ms) |
+| P99 Latency | 133 ms |
+| Error Rate | 0% |
+| Concurrent double-resolve attempts | 1 commit, 9 safe rollbacks ✅ |
+
+---
+
 ## 🗄️ Database Schema
 
 ```prisma
@@ -191,20 +205,6 @@ All endpoints are prefixed with `/api`. Protected routes require `Authorization:
 | BOLA / IDOR | Residents can only read/write **their own** complaints; verified server-side |
 | File uploads | MIME type check + 5 MB size limit via Multer before Cloudinary |
 | Atomic status updates | Prisma `$transaction` prevents race conditions on concurrent updates |
-
----
-
-## ⚡ Performance Benchmarks
-
-Tested under simulated concurrency with 100 virtual threads on `GET /api/notices`:
-
-| Metric | Result |
-|--------|--------|
-| P50 Latency | 127 ms |
-| P95 Latency | 131 ms ✅ (target ≤ 150 ms) |
-| P99 Latency | 133 ms |
-| Error Rate | 0% |
-| Concurrent double-resolve attempts | 1 commit, 9 safe rollbacks ✅ |
 
 ---
 

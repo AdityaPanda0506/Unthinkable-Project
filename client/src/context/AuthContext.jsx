@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 
@@ -17,8 +17,19 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user profile details on mount to verify session freshness
+  // Ref to skip the /auth/me re-verification when login/register already
+  // provided fresh user data — prevents isLoading from re-triggering to true
+  // and causing a white-screen hang after a successful login.
+  const skipNextVerify = useRef(false);
+
+  // Verify session freshness on mount (and only on genuine token changes)
   useEffect(() => {
+    if (skipNextVerify.current) {
+      skipNextVerify.current = false;
+      setIsLoading(false);
+      return;
+    }
+
     const loadUser = async () => {
       if (token) {
         try {
@@ -44,13 +55,17 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axiosClient.post('/auth/login', { email, password });
       const { token: userToken, user: userData } = response.data;
-      
+
       localStorage.setItem('token', userToken);
       localStorage.setItem('user', JSON.stringify(userData));
-      
+
+      // Signal the token-change effect to skip /auth/me — we already have
+      // fresh data from the login response.
+      skipNextVerify.current = true;
+
       setToken(userToken);
       setUser(userData);
-      
+
       // Navigate based on user role
       if (userData.role === 'ADMIN') {
         navigate('/admin/dashboard');
@@ -76,6 +91,9 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem('token', userToken);
       localStorage.setItem('user', JSON.stringify(userData));
+
+      // Same skip as login — fresh data already in hand.
+      skipNextVerify.current = true;
 
       setToken(userToken);
       setUser(userData);

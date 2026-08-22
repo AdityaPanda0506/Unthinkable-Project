@@ -87,6 +87,17 @@ const NotFoundPage = () => {
   );
 };
 
+/**
+ * Redirects /dashboard to the correct role-specific dashboard.
+ * Handles old bookmarks and any legacy hard-coded links.
+ */
+const RoleDashboardRedirect = () => {
+  const { user } = useAuth();
+  return user?.role === 'ADMIN'
+    ? <Navigate to="/admin/dashboard" replace />
+    : <Navigate to="/resident/dashboard" replace />;
+};
+
 function App() {
   return (
     <Routes>
@@ -137,12 +148,15 @@ function App() {
         }
       />
 
-      {/* Default routing */}
+      {/* Root: redirect to login; after login AuthContext drives role-based routing */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* Legacy /dashboard fallback — dispatches by role so old bookmarks work */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
-            <Navigate to="/login" replace />
+            <RoleDashboardRedirect />
           </ProtectedRoute>
         }
       />

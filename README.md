@@ -23,11 +23,16 @@ Built for apartment communities — bridging residents and administration throug
 ## 🎥 Demo Video
 
 <div align="center">
-  <video src="https://github.com/AdityaPanda0506/Unthinkable-Project/raw/main/docs/Unthinkable%20demo.mp4"
-         controls
-         width="100%"
-         style="max-width:900px;border-radius:12px;">
-  </video>
+  <a href="https://youtu.be/Zr9voG1yTQ0" target="_blank">
+    <img src="https://img.youtube.com/vi/Zr9voG1yTQ0/maxresdefault.jpg" 
+         alt="SocietyPulse Walkthrough Video" 
+         width="100%" 
+         style="max-width:850px; border-radius:12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);" />
+  </a>
+  <br/><br/>
+  <a href="https://youtu.be/Zr9voG1yTQ0" target="_blank">
+    <img src="https://img.shields.io/badge/▶️%20Watch%20Demo%20on%20YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo"/>
+  </a>
 </div>
 
 ---

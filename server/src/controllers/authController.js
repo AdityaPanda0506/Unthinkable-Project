@@ -48,10 +48,10 @@ const register = async (req, res) => {
     // Save user
     const user = await prisma.user.create({
       data: {
-        email: email.toLowerCase(),
+        email: email.toLowerCase().trim(),
         password: hashedPassword,
         name,
-        role: formattedRole,
+        role: formattedRole.trim(),
         flatNumber: formattedRole === 'RESIDENT' ? flatNumber : null,
         phone,
       },
@@ -102,7 +102,7 @@ const login = async (req, res) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role,
+          role: user.role.trim(),
           flatNumber: user.flatNumber,
           phone: user.phone,
         },
@@ -140,7 +140,10 @@ const getMe = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.json(user);
+    return res.json({
+      ...user,
+      role: user.role.trim(),
+    });
   } catch (error) {
     console.error('Fetch profile details error:', error);
     return res.status(500).json({ message: 'Server error retrieving profile' });

@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,8 +9,8 @@ export default defineConfig({
     host: true,
   },
   build: {
-    // 'hidden' generates source maps for error tracking tools
-    // but does NOT embed them inline (avoids eval() CSP violation)
+    // 'hidden' generates .map files for error tracking
+    // but does NOT embed eval() in the bundle
     sourcemap: 'hidden',
   },
 })

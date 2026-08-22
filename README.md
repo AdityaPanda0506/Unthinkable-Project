@@ -20,6 +20,16 @@ Built for apartment communities — bridging residents and administration throug
 
 ---
 
+## 🎥 Demo Video
+
+<div align="center">
+
+https://github.com/AdityaPanda0506/Unthinkable-Project/raw/main/docs/Unthinkable%20demo.mp4
+
+</div>
+
+---
+
 ## 📌 Quick Links
 
 | | |

@@ -8,7 +8,8 @@ import AdminComplaints from './pages/AdminComplaints';
 import NoticeBoardPage from './pages/NoticeBoardPage';
 
 /**
- * Route Guard enforcing authentication and allowed user roles
+ * Route Guard enforcing authentication and allowed user roles.
+ * Uses .toUpperCase() for defensive role comparison.
  */
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -25,8 +26,10 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    return user?.role === 'ADMIN' ? (
+  const role = user?.role?.toUpperCase();
+
+  if (allowedRoles && !allowedRoles.map(r => r.toUpperCase()).includes(role)) {
+    return role === 'ADMIN' ? (
       <Navigate to="/admin/dashboard" replace />
     ) : (
       <Navigate to="/resident/dashboard" replace />
@@ -37,7 +40,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 /**
- * Public Route Guard: Redirects authenticated users away from the login page
+ * Public Route Guard: Redirects authenticated users away from the login page.
  */
 const PublicRoute = ({ children }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -51,7 +54,7 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated && user) {
-    return user.role === 'ADMIN' ? (
+    return user?.role?.toUpperCase() === 'ADMIN' ? (
       <Navigate to="/admin/dashboard" replace />
     ) : (
       <Navigate to="/resident/dashboard" replace />
@@ -66,7 +69,7 @@ const PublicRoute = ({ children }) => {
  */
 const NotFoundPage = () => {
   const { user } = useAuth();
-  const homePath = user?.role === 'ADMIN' ? '/admin/dashboard' : '/resident/dashboard';
+  const homePath = user?.role?.toUpperCase() === 'ADMIN' ? '/admin/dashboard' : '/resident/dashboard';
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-sand-light text-center px-6 py-12 relative overflow-hidden">
@@ -93,7 +96,7 @@ const NotFoundPage = () => {
  */
 const RoleDashboardRedirect = () => {
   const { user } = useAuth();
-  return user?.role === 'ADMIN'
+  return user?.role?.toUpperCase() === 'ADMIN'
     ? <Navigate to="/admin/dashboard" replace />
     : <Navigate to="/resident/dashboard" replace />;
 };
@@ -101,7 +104,7 @@ const RoleDashboardRedirect = () => {
 function App() {
   return (
     <Routes>
-      {/* Public Authentication routes */}
+      {/* Public Authentication route */}
       <Route
         path="/login"
         element={
@@ -111,29 +114,30 @@ function App() {
         }
       />
 
-      {/* Resident Nested Portal Routing */}
+      {/* Resident Portal — flat route, no nested <Routes> */}
       <Route
-        path="/resident/*"
+        path="/resident/dashboard"
         element={
           <ProtectedRoute allowedRoles={['RESIDENT']}>
-            <Routes>
-              <Route path="dashboard" element={<ResidentDashboard />} />
-              <Route path="*" element={<Navigate to="dashboard" replace />} />
-            </Routes>
+            <ResidentDashboard />
           </ProtectedRoute>
         }
       />
 
-      {/* Admin Nested Portal Routing */}
+      {/* Admin Portal — flat routes, no nested <Routes> */}
       <Route
-        path="/admin/*"
+        path="/admin/dashboard"
         element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
-            <Routes>
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="complaints" element={<AdminComplaints />} />
-              <Route path="*" element={<Navigate to="dashboard" replace />} />
-            </Routes>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/complaints"
+        element={
+          <ProtectedRoute allowedRoles={['ADMIN']}>
+            <AdminComplaints />
           </ProtectedRoute>
         }
       />
@@ -148,10 +152,7 @@ function App() {
         }
       />
 
-      {/* Root: redirect to login; after login AuthContext drives role-based routing */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
-      {/* Legacy /dashboard fallback — dispatches by role so old bookmarks work */}
+      {/* Legacy /dashboard — dispatches by role */}
       <Route
         path="/dashboard"
         element={
@@ -161,7 +162,10 @@ function App() {
         }
       />
 
-      {/* 404 Route Catch-All */}
+      {/* Root redirect */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
+      {/* 404 Catch-All */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

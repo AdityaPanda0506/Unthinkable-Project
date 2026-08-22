@@ -7,5 +7,10 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true,
-  }
+  },
+  build: {
+    // 'hidden' generates source maps for error tracking tools
+    // but does NOT embed them inline (avoids eval() CSP violation)
+    sourcemap: 'hidden',
+  },
 })
